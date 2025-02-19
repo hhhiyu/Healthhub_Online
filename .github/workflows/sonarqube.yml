@@ -10,7 +10,6 @@ on:
 
 jobs:
   sonar:
-    name: SonarQube Analysis
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +20,14 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
+
+      # Install additional workloads (needed for Web Applications)
+      - name: Install .NET SDK Workloads
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-6.0
+          sudo apt-get install -y aspnetcore-runtime-6.0
+          sudo apt-get install -y dotnet-targeting-pack-4.8
 
       - name: Restore Dependencies
         run: dotnet restore
