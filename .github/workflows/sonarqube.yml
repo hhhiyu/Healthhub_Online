@@ -4,25 +4,52 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   sonar:
+    name: SonarQube Analysis
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - name: Setup .NET 6.0
+        uses: actions/setup-dotnet@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          dotnet-version: 6.0.x
 
-      - name: Run SonarQube Scan
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Solution
+        run: dotnet build --no-restore
+
+      - name: Install SonarScanner for .NET
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Begin SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          mvn verify sonar:sonar \
-            -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.login=$SONAR_TOKEN
+          dotnet-sonarscanner begin /k:"your-project-key" \
+            /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml"
+
+      - name: Build Solution for Analysis
+        run: dotnet build --no-restore
+
+      - name: Run Unit Tests & Collect Coverage
+        run: |
+          dotnet test --no-build --collect:"XPlat Code Coverage" \
+            --settings coverlet.runsettings
+
+      - name: End SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
