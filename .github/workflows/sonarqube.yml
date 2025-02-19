@@ -10,7 +10,7 @@ on:
 
 jobs:
   sonar:
-    runs-on: windows-latest  # Ensure using Windows runner
+    runs-on: windows-latest  # Required for .NET Framework
 
     steps:
       - name: Checkout Repository
@@ -23,15 +23,14 @@ jobs:
         run: nuget restore Healthhub_Online.sln
 
       - name: Install .NET Framework 4.7.2 Developer Pack
-        run: |
-          choco install netfx-4.7.2-devpack -y
+        run: choco install netfx-4.7.2-devpack -y
 
-      - name: Install Visual Studio Build Tools
-        run: |
-          choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Component.WebBuildTools --add Microsoft.Net.Component.4.7.2.SDK --includeRecommended" -y
+      - name: Install Visual Studio Web Build Tools
+        run: choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Component.WebBuildTools --includeRecommended" -y
 
       - name: Build Solution
-        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
+        run: |
+          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Install SonarScanner for .NET
         run: dotnet tool install --global dotnet-sonarscanner
@@ -46,7 +45,8 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
 
       - name: Build Solution for Analysis
-        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
+        run: |
+          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: End SonarQube Scan
         env:
