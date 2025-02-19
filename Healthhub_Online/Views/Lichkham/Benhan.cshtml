@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "File bệnh án";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var u = Session["user"] as Healthhub_Online.Models.NguoiDung;
+}
+
+<h2>File bệnh án đã được gửi. Vui lòng tải xuống để xem và thực hiện theo yêu cầu của bác sĩ.</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.FilePath))
+{
+    <div>
+        
+        <br />
+        @if (ViewBag.IDLichKham != null)
+        {
+            <a href="@Url.Action("DownloadFile", "LichKham", new { id = ViewBag.IDLichKham })" class="btn btn-primary">Tải file</a>
+        }
+    </div>
+}
+else
+{
+    <h3 style="color: red;">@ViewBag.Message</h3>
+}
+
+<div style="margin-top: 20px;">
+    <a href="@Url.Action("Datuvanxong", "LichKham", new { id = u.IDNguoiDung  })">Trở về</a>
+</div>

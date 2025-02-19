@@ -1,0 +1,32 @@
+﻿@model Healthhub_Online.Models.NguoiDung
+@{
+    ViewBag.Title = "Đặt lại mật khẩu";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center">@ViewBag.Title</h2>
+
+            @using (Html.BeginForm("Datlaimatkhau", "Home", FormMethod.Post, new { @class = "form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    @Html.Label("Mật khẩu mới", new { @class = "control-label" })
+                    @Html.Password("password", null, new { @class = "form-control", placeholder = "Nhập mật khẩu mới" })
+                    @Html.ValidationMessage("password", "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Nhập lại mật khẩu", new { @class = "control-label" })
+                    @Html.Password("confirmPassword", null, new { @class = "form-control", placeholder = "Nhập lại mật khẩu mới" })
+                    @Html.ValidationMessage("confirmPassword", "", new { @class = "text-danger" })
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" style="width: 150px;">Đặt lại mật khẩu</button>
+
+            }
+        </div>
+    </div>
+</div>

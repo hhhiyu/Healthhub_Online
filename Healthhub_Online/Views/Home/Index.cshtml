@@ -1,0 +1,99 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+@model IEnumerable<Healthhub_Online.Models.Solieudichbenh>
+<style type="text/css">
+    th {
+        text-align: center;
+    }
+
+    td {
+        text-align: center;
+    }
+</style>
+
+<div class="jumbotron">
+    <p class="lead">
+        Hãy chăm sóc sức khỏe bản thân ngay từ bây giờ !
+    </p>
+    <img class="img-responsive" src="~/Common/images/bs.jpg" />
+    <br />
+    <p style="float:right"><a href="@Url.Action("TraCuu","Home")" class="btn btn-primary btn-lg"> Tra cứu trung tâm gần nhất &raquo;</a></p>
+</div>
+
+<div class="row">
+    <div class="col-md-8" style="border:1px solid red">
+        <h2>
+            Bản tin Covid
+            <a href="https://icon-library.net/icon/new-icon-gif-2.html" title="New Icon Gif #132152"><img src="https://icon-library.net//images/new-icon-gif/new-icon-gif-2.jpg" width="50" /></a>
+        </h2>
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quocgia)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Nam)
+                </th>
+                <th class="bg-info">
+                    @Html.DisplayNameFor(model => model.Dichbenh)
+                </th>
+                <th class="bg-danger">
+                    @Html.DisplayNameFor(model => model.Canhiem)
+                </th>
+
+                </th>
+                <th class="bg-info">
+                    @Html.DisplayNameFor(model => model.Tuvong)
+                </th>
+
+
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <b>@Html.DisplayFor(modelItem => item.Quocgia)</b>
+                    </td>
+                    <td style="color:red">
+                        @Html.DisplayFor(modelItem => item.Nam)
+                    </td>
+                    <td style="color: gold">
+                        @Html.DisplayFor(modelItem => item.Dichbenh)
+                    </td>
+                    <td style="color: aqua">
+                        @Html.DisplayFor(modelItem => item.Canhiem) 
+                    </td>
+                    <td class="text-info">
+                        @Html.DisplayFor(modelItem => item.Tuvong)
+                    </td>
+
+                </tr>
+            }
+
+        </table>
+    </div>
+
+    <div class="col-md-4">
+        <center>
+            <h2> Tiếp nhận phản ánh </h2>
+            <img class="img-responsive" src="~/images/images/duongaynong.png" width="270" height="200" />
+        </center>
+    </div>
+
+</div>
+<br />
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        @Html.Action("TintucNewPartial", "Home")
+    </div>
+    <div class="col-md-4">
+        @Html.Action("TintucHotPartial", "Home")
+    </div>
+
+</div>
+
+

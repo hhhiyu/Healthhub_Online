@@ -1,0 +1,18 @@
+﻿@model Healthhub_Online.Models.LichKham
+
+@{
+    ViewBag.Title = "Gửi bệnh án";
+}
+
+<h2>Gửi bệnh án cho lịch tư vấn</h2>
+
+@using (Html.BeginForm("Guibenhan", "Bacsi", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(model => model.IDLichKham)
+    <div class="form-group">
+        <label for="file">Chọn file bệnh án:</label>
+        <input type="file" name="file" id="file" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Gửi</button>
+    @ViewBag.Message
+}

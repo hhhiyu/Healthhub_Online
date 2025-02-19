@@ -1,0 +1,87 @@
+﻿@model Healthhub_Online.Models.DanhGia
+
+@{
+    ViewBag.Title = "DanhGia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var u = Session["user"] as Healthhub_Online.Models.NguoiDung;
+}
+
+<br />
+<h2 style="color:orangered">Đánh giá buổi khám</h2>
+
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success">
+        @Html.Raw(ViewBag.SuccessMessage)
+    </div>
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.IDNguoiDung, "Người đặt lịch khám", htmlAttributes: new { @class = "control-label col-md-6" })
+            <div class="col-md-6">
+                <select class="form-control" id="IDNguoiDung" name="IDNguoiDung">
+                    <option value="@u.IDNguoiDung">@u.HoTen</option>
+                </select>
+                @Html.ValidationMessageFor(model => model.IDNguoiDung, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IDQuanTri, "Đặt lịch với bác sĩ", htmlAttributes: new { @class = "control-label col-md-6" })
+            <div class="col-md-6">
+                @Html.DropDownList("IDQuanTri", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.IDQuanTri, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.Label("Thời gian bắt đầu", htmlAttributes: new { @class = "control-label col-md-6" })
+            <div class="col-md-6">
+                @Html.DisplayFor(model => model.LichKham.BatDau)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Thời gian kết thúc", htmlAttributes: new { @class = "control-label col-md-6" })
+            <div class="col-md-6">
+                @Html.DisplayFor(model => model.LichKham.KetThuc)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.NoiDung, " Nội Dung", htmlAttributes: new { @class = "control-label col-md-6" })
+            <div class="col-md-6">
+                <textarea cols="50" data-val="true" data-val-length="The field Chủ đề must be a string with a maximum length of 100." data-val-length-max="100" htmlAttributes="{ class = form-control }"
+                          id="NoiDung" name="NoiDung" rows="10"></textarea>
+                @Html.ValidationMessageFor(model => model.NoiDung, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IDDanhGiaChatLuong, " Đánh Giá", htmlAttributes: new { @class = "control-label col-md-6" })
+            <div class="col-md-6">
+                @Html.DropDownList("IDDanhGiaChatLuong", null, htmlAttributes: new { @class = "form-control" })
+
+                @Html.ValidationMessageFor(model => model.IDDanhGiaChatLuong, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @* Hidden fields to send IDLichKham, BatDau, KetThuc to the controller *@
+        @Html.HiddenFor(model => model.IDLichKham)
+        @Html.HiddenFor(model => model.LichKham.BatDau)
+        @Html.HiddenFor(model => model.LichKham.KetThuc)
+
+        <div class="form-group">
+            <div class="col-md-offset-6 col-md-6">
+                <input type="submit" value="Đánh giá" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+}
+
+

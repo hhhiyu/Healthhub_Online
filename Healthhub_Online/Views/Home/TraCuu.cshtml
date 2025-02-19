@@ -1,0 +1,140 @@
+﻿
+
+@{
+    ViewBag.Title = "TraCuu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<hr />
+<center><h1>Tra cứu trung tâm y tế gần nhất</h1> </center>
+
+@using Healthhub_Online.Models
+@{
+    var u = Session["user"] as Healthhub_Online.Models.NguoiDung;
+    var userBS = Session["userBS"] as Healthhub_Online.Models.QuanTri;
+}
+@Html.AntiForgeryToken()
+<head>
+    <style>
+        .centered-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        input[type="text"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<div class="form-horizontal">
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @{
+        string diachi;
+        if (u != null)
+        {
+            diachi = u.DiaChiCuThe;
+        }
+        else { diachi = ""; }
+
+    }
+    <div>
+        <input type="text" id="userLocation" placeholder="Địa chỉ của bạn" value="@diachi" />
+        <button onclick="findHospitals()">Tìm kiếm</button>
+    </div>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeZxjjFyaCucZg9MN4gRySSEDDLl_BFXc&callback=initMap&libraries=places">
+    </script>
+    <div id="map" style="height: 500px; width: 100%;"></div>
+
+
+
+
+</div>
+<center>
+
+</center>
+
+
+<script>
+    var map;
+    var service;
+    var infowindow;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 200
+        });
+        infowindow = new google.maps.InfoWindow();
+    }
+
+    function findHospitals() {
+        var locationInput = document.getElementById('userLocation').value;
+        var geocoder = new google.maps.Geocoder();
+
+        geocoder.geocode({ 'address': locationInput }, function (results, status) {
+            if (status == 'OK') {
+                map.setCenter(results[0].geometry.location);
+                var userMarker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });
+
+                markNearbyHospitals(map, results[0].geometry.location);
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+
+    function markNearbyHospitals(map, center) {
+        service = new google.maps.places.PlacesService(map);
+        service.nearbySearch({
+            location: center,
+            radius: 5000,
+            type: ['hospital']
+        }, function (results, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                for (var i = 0; i < results.length; i++) {
+                    createMarker(results[i]);
+                }
+            }
+        });
+    }
+
+    function createMarker(place) {
+        var marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location,
+            title: place.name
+        });
+
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.setContent(place.name);
+            infowindow.open(map, this);
+        });
+    }
+</script>

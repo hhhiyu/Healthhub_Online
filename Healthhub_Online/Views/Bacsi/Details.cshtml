@@ -1,0 +1,59 @@
+﻿@model Healthhub_Online.Models.QuanTri
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var userBS = Session["userBS"] as Healthhub_Online.Models.QuanTri;
+}
+<h2>Hồ sơ cá nhân</h2>
+<br />
+<div class="">
+    <div class="col-md-6">
+
+        <img class="imgavt" src=@Model.AnhBia width="170" height="170" />
+        &nbsp;
+        <div class="divInfo">
+            <b> @Html.DisplayFor(model => model.HoTen)</b>
+            <br />
+            Khoa: @Html.DisplayFor(model => model.Khoa.TenKhoa)
+            <br />
+
+            Trình độ : @Html.DisplayFor(model => model.TrinhDo)
+
+
+        </div>
+    </div>
+
+
+</div>
+<br />
+<h4>Đánh giá từ người dùng</h4>
+<hr />  
+@if (ViewBag.Feedback != null && ViewBag.Feedback.Count > 0)
+{
+    <ul>
+        @foreach (var feedback in ViewBag.Feedback)
+        {
+            <li>
+                <strong>@feedback.DanhGiaChatLuong.DanhGiaChatLuong1:</strong> @feedback.NoiDung
+                <br />
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No feedback available.</p>
+}
+</div>
+@{
+    if (userBS != null)
+    {
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.IDQuanTri }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    }
+}
