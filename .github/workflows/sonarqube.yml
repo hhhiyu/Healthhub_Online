@@ -28,7 +28,8 @@ jobs:
       - name: Install Visual Studio Web Build Tools
         run: choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Component.WebBuildTools --includeRecommended" -y
 
-
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
 
       - name: Build Solution
         run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
