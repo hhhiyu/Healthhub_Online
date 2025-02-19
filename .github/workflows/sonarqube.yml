@@ -10,7 +10,7 @@ on:
 
 jobs:
   sonar:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Use Windows runner instead of Ubuntu
 
     steps:
       - name: Checkout Repository
@@ -21,13 +21,11 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
-      # Install additional workloads (needed for Web Applications)
-      - name: Install .NET SDK Workloads
+      - name: Install .NET Framework Developer Pack
         run: |
-          sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-6.0
-          sudo apt-get install -y aspnetcore-runtime-6.0
-          sudo apt-get install -y dotnet-targeting-pack-4.8
+          choco install dotnetfx -y
+          choco install dotnetfx-sdk -y
+          choco install visualstudio2019buildtools --package-parameters "--add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.Web --includeRecommended" -y
 
       - name: Restore Dependencies
         run: dotnet restore
@@ -43,9 +41,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          dotnet-sonarscanner begin /k:"your-project-key" \
-            /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+          dotnet-sonarscanner begin /k:"your-project-key" `
+            /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" `
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml"
 
       - name: Build Solution for Analysis
@@ -53,7 +51,7 @@ jobs:
 
       - name: Run Unit Tests & Collect Coverage
         run: |
-          dotnet test --no-build --collect:"XPlat Code Coverage" \
+          dotnet test --no-build --collect:"XPlat Code Coverage" `
             --settings coverlet.runsettings
 
       - name: End SonarQube Scan
