@@ -1,0 +1,56 @@
+name: SonarQube Analysis (.NET Framework 4.7.2)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  sonar:
+    runs-on: windows-latest  # Required for .NET Framework
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1
+
+      - name: Restore NuGet Packages
+        run: nuget restore Healthhub_Online.sln
+
+      - name: Install .NET Framework 4.7.2 Developer Pack
+        run: choco install netfx-4.7.2-devpack -y
+
+      - name: Install Visual Studio Web Build Tools
+        run: choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Component.WebBuildTools --includeRecommended" -y
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Only Main Project
+        run: msbuild "Healthhub_Online.sln" /p:Configuration=Release /p:Platform="Any CPU"
+
+
+      - name: Install SonarScanner for .NET
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Begin SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          dotnet-sonarscanner begin /k:"your-project-key" `
+            /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" `
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
+
+      - name: Build Solution for Analysis
+        run: msbuild "Healthhub_Online.sln" /p:Configuration=Release /p:Platform="Any CPU"
+
+      - name: End SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
