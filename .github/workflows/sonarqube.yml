@@ -32,7 +32,7 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Build Only Main Project
-        run: msbuild "Healthhub_Online\Healthhub_Online.sln" /p:Configuration=Release /p:Platform="Any CPU"
+        run: msbuild "Healthhub_Online.sln" /p:Configuration=Release /p:Platform="Any CPU"
 
 
       - name: Install SonarScanner for .NET
@@ -48,7 +48,7 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
 
       - name: Build Solution for Analysis
-        run: msbuild "Healthhub_Online\Healthhub_Online.sln" /p:Configuration=Release /p:Platform="Any CPU"
+        run: msbuild "Healthhub_Online.sln" /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: End SonarQube Scan
         env:
