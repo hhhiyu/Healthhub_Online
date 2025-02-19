@@ -24,15 +24,19 @@ jobs:
 
       - name: Install .NET Framework 4.7.2 Developer Pack
         run: choco install netfx-4.7.2-devpack -y
-
-      - name: Install Visual Studio Web Build Tools
-        run: choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Component.WebBuildTools --includeRecommended" -y
+        
+      - name: Install Web Build Tools
+        run: |
+          choco install visualstudio2022buildtools --params "--add Microsoft.VisualStudio.Component.Web"
+          choco install visualstudio2022-workload-webbuildtools
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
 
-      - name: Build Only Main Project
-        run: msbuild "Healthhub_Online.sln" /p:Configuration=Release /p:Platform="Any CPU"
+
+      - name: Build Solution (Exclude Unit Tests)
+        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU" /p:ExcludeProject=UnitTestLogin.csproj
+
 
 
       - name: Install SonarScanner for .NET
@@ -47,8 +51,9 @@ jobs:
             /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" `
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
 
-      - name: Build Solution for Analysis
-        run: msbuild "Healthhub_Online.sln" /p:Configuration=Release /p:Platform="Any CPU"
+      - name: Build Solution (Exclude Unit Tests)
+        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU" /p:ExcludeProject=UnitTestLogin.csproj
+
 
       - name: End SonarQube Scan
         env:
