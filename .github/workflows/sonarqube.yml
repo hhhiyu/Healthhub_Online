@@ -28,6 +28,9 @@ jobs:
       - name: Restore Dependencies (NuGet)
         run: dotnet restore
 
+      - name: Restore NuGet Packages for packages.config (if applicable)
+        run: nuget restore Healthhub_Online.sln
+
       - name: Build Solution
         run: dotnet build --no-restore
 
@@ -46,6 +49,7 @@ jobs:
 
       - name: Build Solution for Analysis
         run: dotnet build --no-restore
+
 
 
       - name: End SonarQube Scan
