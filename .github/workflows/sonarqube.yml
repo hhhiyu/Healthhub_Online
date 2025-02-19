@@ -28,9 +28,10 @@ jobs:
       - name: Install Visual Studio Web Build Tools
         run: choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Component.WebBuildTools --includeRecommended" -y
 
+
+
       - name: Build Solution
-        run: |
-          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
+        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Install SonarScanner for .NET
         run: dotnet tool install --global dotnet-sonarscanner
@@ -45,8 +46,7 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
 
       - name: Build Solution for Analysis
-        run: |
-          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
+        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: End SonarQube Scan
         env:
