@@ -1,4 +1,4 @@
-name: SonarQube Analysis
+name: SonarQube Analysis (.NET Framework 4.7.2)
 
 on:
   push:
@@ -16,23 +16,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET 6.0
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.0.x
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1
 
-      - name: Install Visual Studio Web Build Tools
-        run: |
-          choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Component.WebBuildTools --add Microsoft.Net.Component.4.8.SDK --includeRecommended" -y
-
-      - name: Restore Dependencies (NuGet)
-        run: dotnet restore
-
-      - name: Restore NuGet Packages for packages.config (if applicable)
+      - name: Restore NuGet Packages
         run: nuget restore Healthhub_Online.sln
 
+      - name: Install .NET Framework 4.7.2 Developer Pack
+        run: |
+          choco install netfx-4.7.2-devpack -y
+
+      - name: Install Visual Studio Build Tools
+        run: |
+          choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Component.WebBuildTools --add Microsoft.Net.Component.4.7.2.SDK --includeRecommended" -y
+
       - name: Build Solution
-        run: msbuild /t:rebuild
+        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Install SonarScanner for .NET
         run: dotnet tool install --global dotnet-sonarscanner
@@ -44,13 +43,10 @@ jobs:
         run: |
           dotnet-sonarscanner begin /k:"your-project-key" `
             /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" `
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml"
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
 
       - name: Build Solution for Analysis
-        run: dotnet build --no-restore
-
-
+        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: End SonarQube Scan
         env:
