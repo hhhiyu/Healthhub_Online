@@ -31,8 +31,9 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
 
-      - name: Build Solution
-        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
+      - name: Build Only Main Project
+        run: msbuild "Healthhub_Online\Healthhub_Online.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+
 
       - name: Install SonarScanner for .NET
         run: dotnet tool install --global dotnet-sonarscanner
@@ -47,7 +48,7 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
 
       - name: Build Solution for Analysis
-        run: msbuild Healthhub_Online.sln /p:Configuration=Release /p:Platform="Any CPU"
+        run: msbuild "Healthhub_Online\Healthhub_Online.csproj" /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: End SonarQube Scan
         env:
