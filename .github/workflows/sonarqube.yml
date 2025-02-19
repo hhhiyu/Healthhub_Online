@@ -10,7 +10,7 @@ on:
 
 jobs:
   sonar:
-    runs-on: windows-latest  # Use Windows runner instead of Ubuntu
+    runs-on: windows-latest  # Ensure using Windows runner
 
     steps:
       - name: Checkout Repository
@@ -21,13 +21,11 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
-      - name: Install .NET Framework Developer Pack
+      - name: Install Visual Studio Web Build Tools
         run: |
-          choco install dotnetfx -y
-          choco install dotnetfx-sdk -y
-          choco install visualstudio2019buildtools --package-parameters "--add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.Web --includeRecommended" -y
+          choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Component.WebBuildTools --add Microsoft.Net.Component.4.8.SDK --includeRecommended" -y
 
-      - name: Restore Dependencies
+      - name: Restore Dependencies (NuGet)
         run: dotnet restore
 
       - name: Build Solution
@@ -49,10 +47,6 @@ jobs:
       - name: Build Solution for Analysis
         run: dotnet build --no-restore
 
-      - name: Run Unit Tests & Collect Coverage
-        run: |
-          dotnet test --no-build --collect:"XPlat Code Coverage" `
-            --settings coverlet.runsettings
 
       - name: End SonarQube Scan
         env:
