@@ -10,7 +10,7 @@ on:
 
 jobs:
   sonar:
-    runs-on: windows-latest  # Required for .NET Framework
+    runs-on: self-hosted  # Required for .NET Framework
 
     steps:
       - name: Checkout Repository
