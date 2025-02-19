@@ -47,7 +47,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          dotnet-sonarscanner begin /k:"sqa_9437e9e97554ea85a4ac3b19efbb6adb6a312108" `
+          dotnet-sonarscanner begin /k:"HealthhubOnlineStatictest" `
             /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" `
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
 
