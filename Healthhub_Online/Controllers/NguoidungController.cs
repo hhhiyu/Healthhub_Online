@@ -24,6 +24,7 @@ namespace Healthhub_Online.Controllers
         // GET: Nguoidung/Details/5
         public ActionResult Details(int? id)
         {
+            int test = 1;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
